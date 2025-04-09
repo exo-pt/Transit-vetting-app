@@ -159,6 +159,8 @@ def aperture_phot(image,aperture):
 	return flux
 
 def get_corrected_tpf(tpf):
+	# based on:
+	# https://spacetelescope.github.io/notebooks/notebooks/MAST/TESS/interm_tesscut_astroquery/interm_tesscut_astroquery.html
 	bg_mask = ~tpf.create_threshold_mask(threshold=0.001, reference_pixel=None)
 	tot_bg_pixels = bg_mask.sum()
 	bg_flux = np.array(list(map(lambda x: aperture_phot(x, bg_mask), tpf.hdu[1].data['FLUX']))) / tot_bg_pixels
@@ -224,7 +226,8 @@ def help():
 
 
 if __name__ == '__main__':
-	st.set_page_config(page_title="TESS Transit Vetting app", layout="wide")
+	st.set_page_config(page_title="TESS Transit Vetting", layout="wide")
+
 	set_css()
 	try:
 		xticid = st.query_params.tic #  ?tic=165795955
@@ -266,13 +269,9 @@ if __name__ == '__main__':
 					aa=1
 
 		st.html('<div align="right">v'+__version__+'</div>')
-		#st.markdown('<div class="credits">Github source code: <a href="https://github.com/exo-pt/Tess-Lightcurves-app">Tess Lightcurves</a><br>Using ' +\
-		#		'<a href="https://github.com/exo-pt/TESS-Centroid_vetting">Tess-Centroid Vetting</a><br>' +\
-		#		'<a href="https://github.com/lightkurve/lightkurve">Lightkurve</a>' +\
-		#		' and <a href="https://github.com/plotly/plotly.py">Plotly</a> Python packages.</div>', unsafe_allow_html=True)
-		st.markdown('<div class="credits"><br>Using ' +\
-				'<a href="https://github.com/exo-pt/TESS-Centroid_vetting">Tess-Centroid Vetting</a><br>' +\
-				'<a href="https://github.com/lightkurve/lightkurve">Lightkurve</a>' +\
+		st.markdown('<div class="credits">Github source code: <a href="https://github.com/exo-pt/Transit-vetting-app">Tess transit vetting</a><br/>Using ' +\
+				'<a href="https://github.com/exo-pt/TESS-Centroid_vetting">Tess-Centroid Vetting</a>' +\
+				'<br/><a href="https://github.com/lightkurve/lightkurve">Lightkurve</a>' +\
 				' and <a href="https://github.com/plotly/plotly.py">Plotly</a> Python packages.</div>', unsafe_allow_html=True)
 		help_button()
 

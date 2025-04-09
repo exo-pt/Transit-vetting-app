@@ -17,7 +17,7 @@ If  more than one author is available for the sector, the displayed lightcurve, 
 &nbsp;&nbsp; SPOC (2 min) -> TESS-SPOC -> QLP -> ELEANOR.<br/>
 If the sector is only available in FFI data, tesscut is used to get a targetpixelfile that, after background subtraction, is used to generate the lightcurve<br/>
 
-![Image](https://github.com/exo-pt/Tess-Lightcurves-app/blob/main/Tess-Lightcurves-app.png?raw=true)
+![Image](https://github.com/exo-pt/Transit-vetting-app/blob/main/Transit-vetting-app.png?raw=true)
 
 ## Dependencies:
 - numpy

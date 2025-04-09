@@ -14,10 +14,9 @@ You can access the webapp locally in a Python environmente with the command:<br>
 
 and the app will open in the default browser.
 
-<!---
 This webapp is also currently hosted in Streamlit Cloud. You can access it at<br/>
 > https://transit-vetting.streamlit.app
--->
+
 If  more than one author is available for the sector, the displayed lightcurve, in
 availability order, is:
 &nbsp;&nbsp; SPOC (2 min) -> TESS-SPOC -> QLP -> ELEANOR.

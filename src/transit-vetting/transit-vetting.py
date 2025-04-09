@@ -136,14 +136,14 @@ def display_button(tit, t0, dur):
 		with ph2:
 			st.html('<div class="spc"><i>Calculating centroid, please wait...</i></div>')
 		#try:
-		fig1, fig2, masked_points = get_centroids(tit,t0, dur)
+		fig1, fig2, masked_pixels = get_centroids(tit,t0, dur)
 		#except:
 		#	fig1 = None
 		with ph2.container():
 			if fig1 == None:
 				st.write('***Error getting centroid. [:red[PLOT]] to try again...***')
 			else:
-				npix = len(masked_points)
+				npix = len(masked_pixels)
 				if npix == 0:
 					st.html('<div class="spc">&nbsp;<div>')
 				else:
@@ -207,10 +207,10 @@ def get_centroids(tit, t0, dur):
 	res = centroid_vetting(tpf, [t0], dur, mask_edges=True, ticid=ticid,maglim=23)
 	#img_dif = res["img_diff"]
 	fig1 = res["fig"]
-	masked_points = res["masked_points"]
+	masked_pixels = res["masked_pixels"]
 	fig2 = show_transit_margins(tpf, [t0], dur)
 	del res, tpf
-	return fig1, fig2, masked_points
+	return fig1, fig2, masked_pixels
 
 @st.fragment()
 def help_button():

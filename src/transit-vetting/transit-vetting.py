@@ -118,11 +118,15 @@ def plot(df, tit, dumps):
 		x2 = event["selection"]["box"][0]['x'][1]
 		t0 = round((x1+x2)/2, 3)
 		dur = round(abs(x2-x1),3)
-
+	ph = st.empty()
 	if t0 != 0:
+		ph.empty()
 		spaces = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		st.write('**Selected Transit**: '+ spaces + spaces + 'Epoch = :red[**' +str(t0) + '**]'+ spaces + 'Duration = :red[**'+str(dur) + '**] days.')
 		display_button(tit, t0, dur)
+	else:
+		with ph:
+			st.html('<div class="spc" style="color:dimgrey;">(Select a transit or press [<b>HELP</b>] button for instructions)</div>')
 	return t0, dur
 
 @st.fragment

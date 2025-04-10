@@ -135,10 +135,10 @@ def display_button(tit, t0, dur):
 		ph2.empty()
 		with ph2:
 			st.html('<div class="spc"><i>Calculating centroid, please wait...</i></div>')
-		#try:
-		fig1, fig2, masked_pixels = get_centroids(tit,t0, dur)
-		#except:
-		#	fig1 = None
+		try:
+			fig1, fig2, masked_pixels = get_centroids(tit,t0, dur)
+		except:
+			fig1 = None
 		with ph2.container():
 			if fig1 == None:
 				st.write('***Error getting centroid. [:red[PLOT]] to try again...***')
@@ -358,13 +358,21 @@ if __name__ == '__main__':
 			#try:
 			match author:
 				case 'TESScut':
-					tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
+					try:
+						tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
+					except:
+						st.error('Error downloading Tesscut. Try again...')
+						st.stop()
 					tpf = get_corrected_tpf(tesscut)
 					lc0 = tpf.to_lightcurve()
 					lc0 = lc0.remove_outliers(sigma_lower=20, sigma_upper=3).normalize().remove_nans()
 					st.session_state.ss_tpf = tpf
 				case _:
-					lc0 = sres[index].download(quality_bitmask=1073749231).remove_outliers(sigma_lower=20, sigma_upper=3).normalize().remove_nans()
+					try:
+						lc0 = sres[index].download(quality_bitmask=1073749231).remove_outliers(sigma_lower=20, sigma_upper=3).normalize().remove_nans()
+					except:
+						st.error('Error downloading lightcurve. Try again...')
+						st.stop()
 
 			st.html('&nbsp;<br><br>')
 			df = lc0.to_pandas().reset_index()

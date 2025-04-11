@@ -157,6 +157,8 @@ def get_tpf(tit):
                     tpf = get_corrected_tpf(tesscut)
                 except:
                     return None
+            else:
+                return None
         st.session_state.ss_tpf = tpf
     return tpf
 

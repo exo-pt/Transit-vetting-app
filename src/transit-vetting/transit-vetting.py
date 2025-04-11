@@ -129,7 +129,7 @@ def plot(df, tit, dumps):
             st.html('<div class="spc" style="color:dimgrey;">(Select a transit or press [<b>HELP</b>] button for instructions)</div>')
     return t0, dur
 
-def get_tpf():
+def get_tpf(tit):
     if 'ss_tpf' in st.session_state:
         tpf = st.session_state.ss_tpf
     else:
@@ -170,7 +170,7 @@ def display_button(tit, t0, dur):
     if buttonp:
         with ph2:
             st.html('<div class="spc"><i>Getting TargetPixelFile...</i></div>')
-        tpf = get_tpf()
+        tpf = get_tpf(tit)
         if tpf is None:
             with ph2:
                 st.write('***Error getting taregetpixelfile. Press [PLOT] button to try again...***')

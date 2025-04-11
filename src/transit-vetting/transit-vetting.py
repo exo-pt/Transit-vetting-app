@@ -129,6 +129,36 @@ def plot(df, tit, dumps):
 			st.html('<div class="spc" style="color:dimgrey;">(Select a transit or press [<b>HELP</b>] button for instructions)</div>')
 	return t0, dur
 
+def get_tpf():
+	if 'ss_tpf' in st.session_state:
+		tpf = st.session_state.ss_tpf
+	else:
+		ticid = st.session_state.ss_tic
+		sector = st.session_state.ss_sec
+		TICstr = 'TIC ' + str(ticid)
+		aut = ''
+		if '(SPOC)' in tit:
+			aut = 'SPOC'
+		elif '(TESS-SPOC)' in tit:
+			aut = 'TESS-SPOC'
+		if len(aut):
+			try:
+				tpf = lk.search_targetpixelfile(TICstr, sector=sector, mission='TESS', author=aut).download()
+			except:
+				tpf = None
+		else:
+			sres = lk.search_tesscut(TICstr, sector=sector)
+			if len(sres):
+				try:
+					tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
+					tpf = get_corrected_tpf(tesscut)
+				except:
+					tpf = None
+		if tpf is not None:
+			st.session_state.ss_tpf = tpf
+	return tpf
+
+
 @st.fragment
 def display_button(tit, t0, dur):
 	ph2 = st.empty()
@@ -136,16 +166,22 @@ def display_button(tit, t0, dur):
 		buttonp = st.button("Get Centroid Vetting", type="primary")
 
 	if buttonp:
-		ph2.empty()
+		with ph2:
+			st.html('<div class="spc"><i>Getting TargetPixelFile...</i></div>')
+		tpf = get_tpf()
+		if tpf is None:
+			with ph2:
+				st.write('***Error getting taregetpixelfile. Press [PLOT] button to try again...***')
+			st.stop()
+
 		with ph2:
 			st.html('<div class="spc"><i>Calculating centroid, please wait...</i></div>')
-		try:
-			fig1, fig2, masked_pixels = get_centroids(tit,t0, dur)
-		except:
-			fig1 = None
+
+		fig1, fig2, masked_pixels = get_centroids(tpf, t0, dur)
+
 		with ph2.container():
 			if fig1 == None:
-				st.write('***Error getting centroid. [:red[PLOT]] to try again...***')
+				st.write('***Error getting centroid. Press [PLOT] button to try again...***')
 			else:
 				npix = len(masked_pixels)
 				if npix == 0:
@@ -193,23 +229,13 @@ def get_target_mask(tpf):
 	mask[yy - 1 : yy + 2, xx - 1 : xx + 2] = True
 	return mask
 
-def get_centroids(tit, t0, dur):
-	if 'ss_tpf' in st.session_state:
-		tpf = st.session_state.ss_tpf
-	else:
-		if '(SPOC)' in tit:
-			tpf = lk.search_targetpixelfile(TICstr, sector=sector, mission='TESS', author='SPOC').download()
-		elif '(TESS-SPOC)' in tit:
-			tpf = lk.search_targetpixelfile(TICstr, sector=sector, mission='TESS', author='TESS-SPOC').download()
-		else:
-			sres = lk.search_tesscut(TICstr, sector=sector)
-			if len(sres):
-				tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
-				tpf = get_corrected_tpf(tesscut)
-		st.session_state.ss_tpf = tpf
+def get_centroids(tpf, t0, dur):
+	try:
+		ticid = st.session_state.ss_tic
+		res = centroid_vetting(tpf, [t0], dur, mask_edges=True, ticid=ticid)
+	except:
+	   return None, None, []
 
-	res = centroid_vetting(tpf, [t0], dur, mask_edges=True, ticid=ticid,maglim=23)
-	#img_dif = res["img_diff"]
 	fig1 = res["fig"]
 	masked_pixels = res["masked_pixels"]
 	fig2 = show_transit_margins(tpf, [t0], dur)
@@ -363,7 +389,7 @@ if __name__ == '__main__':
 			match author:
 				case 'TESScut':
 					try:
-						tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
+					   tesscut = sres[0].download(cutout_size=11, quality_bitmask=1073749231)
 					except:
 						st.error('Error downloading Tesscut. Try again...')
 						st.stop()

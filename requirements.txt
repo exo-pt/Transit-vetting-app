@@ -2,6 +2,5 @@ numpy
 pandas
 lightkurve
 plotly
-astroquery
 tesscentroidvetting==1.3.4
 streamlit

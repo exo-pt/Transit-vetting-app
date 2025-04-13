@@ -29,7 +29,6 @@ If the sector is only available in FFI data, an FFI cutout is made to get a targ
 - numpy
 - pandas
 - lightkurve
-- astroquery
 - plotly
 - tesscentroidvetting >= 1.3.4
 - streamlit

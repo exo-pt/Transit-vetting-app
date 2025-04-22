@@ -239,7 +239,7 @@ def get_centroids(t0, dur):
 	tpf = st.session_state.ss_tpf
 	ticid = st.session_state.ss_tic
 	try:
-		res = centroid_vetting(tpf, [t0], dur, mask_edges=True, ticid=ticid)
+		res = centroid_vetting(tpf, [t0], dur, mask_edges=True, ticid=ticid, plot=False)
 	except:
 		return None, None, []
 

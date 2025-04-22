@@ -5,7 +5,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from datetime import datetime
-from tesscentroidvetting import centroid_vetting, show_transit_margins
+
+from tcv import centroid_vetting, show_transit_margins
 from version import __version__
 
 
@@ -176,7 +177,7 @@ def display_button(tit, t0, dur):
 
 		if not get_tpf():
 			with ph2:
-				st.write('***Error getting taregetpixelfile. Press [PLOT] button to try again...***')
+				st.write('***Error getting targetpixelfile. Press [PLOT] button to try again...***')
 			st.stop()
 
 		with ph2:

@@ -399,7 +399,12 @@ if __name__ == '__main__':
 						st.stop()
 
 			st.html('&nbsp;<br><br>')
-			df = lc0.to_pandas().reset_index()
+			try:
+				df = lc0.to_pandas().reset_index()
+			except:
+				with placeholder:
+					st.error('Error: '+ tit + '   malformed lightcurve.')
+				st.stop()
 			df = df[['time', 'flux']]
 
 			ini = min(df['time'])

@@ -164,6 +164,19 @@ def get_tpf():
 		st.session_state.ss_tpf = tpf
 	return True
 
+def safe_normalize(lc, target_median=1000):
+	"""
+	Normalizes a light curve while handling zero/negative medians.
+	"""
+	lc_clean = lc.copy()
+
+	current_median = np.nanmedian(lc_clean.flux)
+
+	if current_median.value <= 0:
+		unit = current_median.unit
+		shift_amount = current_median - (target_median * unit)
+		lc_clean.flux = lc_clean.flux - shift_amount
+	return lc_clean.normalize()
 
 @st.fragment
 def display_button(tit, t0, dur):
@@ -388,16 +401,17 @@ if __name__ == '__main__':
 						st.stop()
 					tpf = get_corrected_tpf(tesscut)
 					lc0 = tpf.to_lightcurve()
-					lc0 = lc0.remove_outliers(sigma_lower=20, sigma_upper=3).normalize().remove_nans()
+					lc0 = lc0.remove_outliers(sigma_lower=20, sigma_upper=3).remove_nans()
 					st.session_state.ss_tpf = tpf
 					del tpf, tesscut
 				case _:
 					try:
-						lc0 = sres[index].download(quality_bitmask=1073749231).remove_outliers(sigma_lower=20, sigma_upper=3).normalize().remove_nans()
+						lc0 = sres[index].download(quality_bitmask=1073749231).remove_outliers(sigma_lower=20, sigma_upper=3).remove_nans()
 					except:
 						st.error('Error downloading lightcurve. Try again...')
 						st.stop()
 
+			lc0 = safe_normalize(lc0)
 			st.html('&nbsp;<br><br>')
 			try:
 				df = lc0.to_pandas().reset_index()
